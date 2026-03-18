@@ -4,17 +4,23 @@ This directory contains a pair of compiled Linux kernel files for ARM64 architec
 
 ## Files
 
-1. **`vmlinux`** (160MB) - Complete kernel ELF executable
-   - Architecture: ARM AArch64
-   - Contains debug symbols and relocation information
-   - Useful for debugging and analysis
-   - File type: ELF 64-bit LSB pie executable, ARM aarch64
-
-2. **`Image`** (48MB) - Bootable kernel image
+### Core Pair
+1. **`Image`** (48MB) - Bootable kernel image
    - Architecture: ARM AArch64
    - Boot executable for ARM64 systems
    - Generated from vmlinux using: `objcopy -O binary -R .note -R .note.gnu.build-id -R .comment -S vmlinux Image`
    - File type: Linux kernel ARM64 boot executable Image, little-endian, 4K pages
+
+### vmlinux (Compressed Versions)
+Due to GitHub file size limits, vmlinux is provided in compressed formats:
+
+2. **`vmlinux.gz`** (58MB) - gzip compressed vmlinux
+   - Complete kernel ELF executable compressed with gzip -9
+   - Original size: 160MB
+
+3. **`vmlinux.xz`** (19MB) - xz compressed vmlinux  
+   - Complete kernel ELF executable compressed with xz -9
+   - Smallest compressed version
 
 ## Relationship
 
@@ -22,9 +28,19 @@ This directory contains a pair of compiled Linux kernel files for ARM64 architec
 
 ## Usage
 
-- **For booting**: Use `Image` file
-- **For debugging**: Use `vmlinux` file with gdb
-- **For analysis**: Both files can be used together with System.map (not included here)
+- **For booting**: Use `Image` file directly
+- **For debugging**: Extract `vmlinux.gz` or `vmlinux.xz` and use with gdb
+- **For analysis**: Both files can be used together
+
+## Extraction Commands
+
+```bash
+# Extract vmlinux from gzip
+gzip -d vmlinux.gz
+
+# Extract vmlinux from xz
+xz -d vmlinux.xz
+```
 
 ## Compilation Details
 
@@ -33,10 +49,14 @@ This directory contains a pair of compiled Linux kernel files for ARM64 architec
 - Compilation date: 2026-03-18
 - Configuration: Default with minimal changes
 
-## Generation Command
+## Generation Commands
 
 ```bash
 # Generate Image from vmlinux
 aarch64-linux-gnu-objcopy -O binary -R .note -R .note.gnu.build-id -R .comment -S vmlinux Image
+
+# Compress vmlinux
+gzip -9 -k vmlinux    # Creates vmlinux.gz
+xz -9 -k vmlinux      # Creates vmlinux.xz
 ```
 
